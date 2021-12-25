@@ -54,6 +54,28 @@ func (boot *GinBoot)UseTraceID(traceIDKey string)*GinBoot {
 			traceId=strings.ReplaceAll(uuid.NewV4().String(),"-","")
 			context.Request.Header.Add(traceIDKey,traceId)
 		}
+		context.Next()
+	})
+	return boot
+}
+
+func (boot *GinBoot)UserCore()*GinBoot  {
+
+	boot.Engine.Use(func(context *gin.Context) {
+		method := context.Request.Method
+
+		context.Header("Access-Control-Allow-Origin", "*")
+		context.Header("Access-Control-Allow-Headers", "access-control-allow-origin,content-Type,AccessToken,X-CSRF-Token, Authorization, Token")
+		context.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+		context.Header("Access-Control-Expose-Headers", "content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, content-Type")
+		context.Header("Access-Control-Allow-Credentials", "true")
+
+		//放行所有OPTIONS方法
+		if method == "OPTIONS" {
+			context.AbortWithStatus(http.StatusNoContent)
+		}
+		// 处理请求
+		context.Next()
 	})
 	return boot
 }
