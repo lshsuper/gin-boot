@@ -6,7 +6,7 @@ import "github.com/gin-gonic/gin"
 type IController interface {
 
     //设定gin的上下文
-    SetContext(c *gin.Context)
+    setContext(c *gin.Context)
     //动态执行action
     CallMethod(ctrl IController,methodName string)
     //忽略注册的方法策略

@@ -15,7 +15,7 @@ type BaseController struct {
 	Ctx *gin.Context
 }
 
-func (b *BaseController)SetContext(c *gin.Context){
+func (b *BaseController)setContext(c *gin.Context){
    b.Ctx=c
 }
 
@@ -48,7 +48,9 @@ func (b *BaseController)IgnoreMethod(methodName string)bool  {
 		methodName=="controllername"||
 		methodName=="ok"||
 		methodName=="fail"||
-		methodName=="result"{
+		methodName=="result"||
+		methodName=="gettraceid"||
+		methodName=="gettraceidkey"{
 		return true
 	}
 	return false
@@ -110,6 +112,16 @@ func (b *BaseController)Result(data interface{},code int,msg string)  {
 		"code":500,
 	})
 
+}
+
+func (b *BaseController)GetTraceID()string  {
+
+	return b.Ctx.GetHeader(getTraceIDKey())
+
+}
+
+func (b *BaseController)GetTraceIDKey()string  {
+    return getTraceIDKey()
 }
 
 

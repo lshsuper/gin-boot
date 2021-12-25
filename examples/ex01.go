@@ -1,6 +1,7 @@
 package examples
 
 import (
+	"github.com/gin-gonic/gin"
 	"github.com/lshsuper/gin-boot/core"
 	"github.com/lshsuper/gin-boot/server"
 )
@@ -16,7 +17,11 @@ func (c *Ex01Controller)Add()  {
 }
 func (c *Ex01Controller)Get()  {
 
-	c.Ok("ok get")
+
+	c.Ok(gin.H{
+		"key":c.GetTraceIDKey(),
+		"value":c.GetTraceID(),
+	})
 
 }
 func (c *Ex01Controller)GetAll()  {
@@ -41,6 +46,8 @@ func Ex01(){
 		RouteStrict: false,  //路由严格匹配（true->表示启动路由大小写严格匹配模式|false->表示忽略路由大小写匹配）
 		Addr: ":10086",
 	})
+	//boot.UseTraceID()
+    boot.Use(core.TraceID("abc"))
 	boot.Register(func() core.IController {
 		return &Ex01Controller{}
 	}).Register(func() core.IController {
