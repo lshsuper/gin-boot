@@ -49,7 +49,7 @@ func (boot *GinBoot) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 }
 
 //Register 注册路由
-func (boot *GinBoot)Register(fn func() core.IController)  {
+func (boot *GinBoot)Register(fn func() core.IController)*GinBoot  {
 
 	c:=fn()
 	t:=reflect.TypeOf(c)
@@ -82,6 +82,8 @@ func (boot *GinBoot)Register(fn func() core.IController)  {
 
 
 	}
+
+	return boot
 
 }
 

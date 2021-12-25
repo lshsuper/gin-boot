@@ -47,7 +47,8 @@ func (b *BaseController)IgnoreMethod(methodName string)bool  {
 		methodName=="getmethodtype"||
 		methodName=="controllername"||
 		methodName=="ok"||
-		methodName=="fail"{
+		methodName=="fail"||
+		methodName=="result"{
 		return true
 	}
 	return false
@@ -72,7 +73,11 @@ func (b *BaseController)GetMethodType(methodName string) MethodType {
 func (b *BaseController)ControllerName(ctrl IController)string  {
 	curCtrl:=reflect.ValueOf(ctrl)
 	t:=strings.Split(curCtrl.Type().String(),".")
-	ctrlName:=strings.TrimRight(t[len(t)-1],"Controller")
+	ctrlName:=t[len(t)-1]
+	i:=strings.Index(ctrlName,"Controller")
+	if i>0{
+		ctrlName=ctrlName[:i]
+	}
 	return ctrlName
 }
 

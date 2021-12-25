@@ -25,6 +25,16 @@ func (c *Ex01Controller)GetAll()  {
 
 }
 
+type Ex01ExtController struct {
+	core.BaseController
+}
+
+func (c *Ex01ExtController)GetAll()  {
+
+	c.Ok("ok getall")
+
+}
+
 func Ex01(){
 
 	boot:= server.New(server.GinBootConf{
@@ -33,6 +43,8 @@ func Ex01(){
 	})
 	boot.Register(func() core.IController {
 		return &Ex01Controller{}
+	}).Register(func() core.IController {
+		return &Ex01ExtController{}
 	})
 	boot.Run()
 }
