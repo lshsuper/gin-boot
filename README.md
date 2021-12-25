@@ -37,7 +37,7 @@ func (c *Ex01Controller)GetAll()  {
 
 ```
 boot:= server.New(server.GinBootConf{
-		RouteStrict: false,  //路由严格匹配（忽略大小写的匹配模式）
+		RouteStrict: false,  ////路由严格匹配（true->表示启动路由大小写严格匹配模式|false->表示忽略路由大小写匹配） 
 		Addr: ":10086",
 	})
 	boot.Register(func() core.IController {
