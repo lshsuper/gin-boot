@@ -1,6 +1,6 @@
 package main
 
-import "gin-boot/examples"
+import "github.com/lshsuper/gin-boot/examples"
 
 func main()  {
 

@@ -1,4 +1,4 @@
-module gin-boot
+module github.com/lshsuper/gin-boot
 
 go 1.14
 

@@ -1,9 +1,9 @@
 package examples
 
 import (
-	"gin-boot/core"
-	"gin-boot/server"
 	"github.com/gin-gonic/gin"
+	"github.com/lshsuper/gin-boot/core"
+	"github.com/lshsuper/gin-boot/server"
 	"net/http"
 )
 

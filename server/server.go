@@ -2,8 +2,8 @@ package server
 
 import (
 	"fmt"
-	"gin-boot/core"
 	"github.com/gin-gonic/gin"
+	"github.com/lshsuper/gin-boot/core"
 	"net/http"
 	"reflect"
 	"strings"
