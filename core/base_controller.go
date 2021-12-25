@@ -85,32 +85,20 @@ func (b *BaseController)ControllerName(ctrl IController)string  {
 
 func (b *BaseController)Ok(data interface{})  {
 
-	b.Ctx.JSON(http.StatusOK,gin.H{
-		"data":data,
-		"msg":"",
-        "code":200,
-	})
+	b.Ctx.JSON(http.StatusOK,Ok(data))
 
 
 }
 
 func (b *BaseController)Fail(msg string)  {
 
-	b.Ctx.JSON(http.StatusOK,gin.H{
-		"data":nil,
-		"msg":msg,
-		"code":500,
-	})
+	b.Ctx.JSON(http.StatusOK, Fail(msg))
 
 }
 
 func (b *BaseController)Result(data interface{},code int,msg string)  {
 
-	b.Ctx.JSON(http.StatusOK,gin.H{
-		"data":nil,
-		"msg":msg,
-		"code":500,
-	})
+	b.Ctx.JSON(http.StatusOK,Result(code,data,msg))
 
 }
 

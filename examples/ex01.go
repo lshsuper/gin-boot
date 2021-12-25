@@ -47,7 +47,8 @@ func Ex01(){
 		Addr: ":10086",
 	})
 	boot.UseTraceID("abc").
-		 UserCore()
+		 UserCore().
+		 UseRecover()
 
 	boot.Register(func() core.IController {
 		return &Ex01Controller{}

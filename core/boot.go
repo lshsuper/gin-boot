@@ -3,6 +3,7 @@ package core
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/lshsuper/gin-boot/utils"
 	uuid "github.com/satori/go.uuid"
 	"net/http"
 	"reflect"
@@ -75,6 +76,24 @@ func (boot *GinBoot)UserCore()*GinBoot  {
 			context.AbortWithStatus(http.StatusNoContent)
 		}
 		// 处理请求
+		context.Next()
+	})
+	return boot
+}
+
+func (boot *GinBoot)UseRecover()*GinBoot  {
+	boot.Engine.Use(func(context *gin.Context) {
+		defer func() {
+			if r := recover(); r != nil {
+
+				context.JSON(http.StatusOK,Fail(utils.ErrorToString(r)))
+				//终止当前接口
+				context.Abort()
+
+			}
+
+		}()
+		//加载完 defer recover，继续后续接口调用
 		context.Next()
 	})
 	return boot
