@@ -15,6 +15,8 @@ type IController interface {
     GetMethodType(methodName string) MethodType
     //控制器名称
     ControllerName(ctrl IController)string
+    Ok(data interface{})
+    Fail(msg string)
 
 }
 

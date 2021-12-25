@@ -1,29 +1,27 @@
 package examples
 
 import (
-	"github.com/gin-gonic/gin"
 	"github.com/lshsuper/gin-boot/core"
 	"github.com/lshsuper/gin-boot/server"
-	"net/http"
 )
 
-type MyController struct {
+type Ex01Controller struct {
 	core.BaseController
 }
 
-func (c *MyController)Add()  {
+func (c *Ex01Controller)Add()  {
 
-	c.Ctx.JSON(http.StatusOK,gin.H{"data":"ok get"})
-
-}
-func (c *MyController)Get()  {
-
-	c.Ctx.JSON(http.StatusOK,gin.H{"data":"ok get"})
+	c.Ok("ok add")
 
 }
-func (c *MyController)GetAll()  {
+func (c *Ex01Controller)Get()  {
 
-	c.Ctx.JSON(http.StatusOK,gin.H{"data":"ok GetAll"})
+	c.Ok("ok get")
+
+}
+func (c *Ex01Controller)GetAll()  {
+
+	c.Ok("ok getall")
 
 }
 
@@ -34,7 +32,7 @@ func Ex01(){
 		Addr: ":10086",
 	})
 	boot.Register(func() core.IController {
-		return &MyController{}
+		return &Ex01Controller{}
 	})
 	boot.Run()
 }

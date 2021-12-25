@@ -2,6 +2,7 @@ package core
 
 import (
 	"github.com/gin-gonic/gin"
+	"net/http"
 	"reflect"
 	"strings"
 )
@@ -44,7 +45,9 @@ func (b *BaseController)IgnoreMethod(methodName string)bool  {
 		methodName=="callmethod"||
 		methodName=="ignoremethod"||
 		methodName=="getmethodtype"||
-		methodName=="controllername"{
+		methodName=="controllername"||
+		methodName=="ok"||
+		methodName=="fail"{
 		return true
 	}
 	return false
@@ -72,6 +75,38 @@ func (b *BaseController)ControllerName(ctrl IController)string  {
 	ctrlName:=strings.TrimRight(t[len(t)-1],"Controller")
 	return ctrlName
 }
+
+func (b *BaseController)Ok(data interface{})  {
+
+	b.Ctx.JSON(http.StatusOK,gin.H{
+		"data":data,
+		"msg":"",
+        "code":200,
+	})
+
+
+}
+
+func (b *BaseController)Fail(msg string)  {
+
+	b.Ctx.JSON(http.StatusOK,gin.H{
+		"data":nil,
+		"msg":msg,
+		"code":500,
+	})
+
+}
+
+func (b *BaseController)Result(data interface{},code int,msg string)  {
+
+	b.Ctx.JSON(http.StatusOK,gin.H{
+		"data":nil,
+		"msg":msg,
+		"code":500,
+	})
+
+}
+
 
 
 
