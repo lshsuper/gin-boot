@@ -3,6 +3,7 @@ package core
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	uuid "github.com/satori/go.uuid"
 	"net/http"
 	"reflect"
 	"strings"
@@ -38,9 +39,22 @@ func (boot *GinBoot) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 }
 
-func (boot *GinBoot)UseTraceID()*GinBoot {
+func (boot *GinBoot)UseTraceID(traceIDKey string)*GinBoot {
 
-	boot.Engine.Use(TraceID(getTraceIDKey()))
+	if len(traceIDKey)<=0{
+		traceIDKey=getTraceIDKey()
+	}else{
+		setTraceIDKey(traceIDKey)
+	}
+
+	boot.Engine.Use(func(context *gin.Context) {
+
+		traceId:=context.GetHeader(traceIDKey)
+		if len(traceId)<=0{
+			traceId=strings.ReplaceAll(uuid.NewV4().String(),"-","")
+			context.Request.Header.Add(traceIDKey,traceId)
+		}
+	})
 	return boot
 }
 
