@@ -38,7 +38,7 @@ func (c *Ex01ExtController)GetAll()  {
 func Ex01(){
 
 	boot:= server.New(server.GinBootConf{
-		RouteStrict: false,  //路由严格匹配（true->表示启动路由大小写严格匹配模式|false->表示忽略路由大小写匹配）
+		RouteStrict: false,  //路由严格匹配（true->表示启动路由大小写严格匹配模式|false->表示忽略路由大小写匹配） 
 		Addr: ":10086",
 	})
 	boot.Register(func() core.IController {
