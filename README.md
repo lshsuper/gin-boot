@@ -1,14 +1,14 @@
 # gin-boot
 说明:对gin框架做的二次封装
 
-简单使用
+### 简单使用
 
-1.获取
+>1.获取
 ```
 go get github.com/lshsuper/gin-boot
 ```
 
-2.定义控制器
+>2.定义控制器
 
 ```
 type Ex01Controller struct {
@@ -33,7 +33,7 @@ func (c *Ex01Controller)GetAll()  {
 
 ```
 
-3.启动
+>3.启动
 
 ```
 boot:= server.New(server.GinBootConf{
