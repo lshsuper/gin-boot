@@ -60,7 +60,7 @@ func (boot *GinBoot)UseTraceID(traceIDKey string)*GinBoot {
 	return boot
 }
 
-func (boot *GinBoot)UserCore()*GinBoot  {
+func (boot *GinBoot)UseCore()*GinBoot  {
 
 	boot.Engine.Use(func(context *gin.Context) {
 		method := context.Request.Method
@@ -81,11 +81,18 @@ func (boot *GinBoot)UserCore()*GinBoot  {
 	return boot
 }
 
-func (boot *GinBoot)UseRecover()*GinBoot  {
+func (boot *GinBoot)UseRecover(fn func(msg string,context *gin.Context)interface{})*GinBoot  {
+
+	if fn==nil{
+		fn= func(msg string,context *gin.Context) interface{} {
+			return Fail(msg)
+		}
+	}
+
 	boot.Engine.Use(func(context *gin.Context) {
 		defer func() {
 			if r := recover(); r != nil {
-				context.JSON(http.StatusOK,Fail(utils.ErrorToString(r)))
+				context.JSON(http.StatusOK, fn(utils.ErrorToString(r),context))
 				//终止当前接口
 				context.Abort()
 			}

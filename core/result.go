@@ -7,6 +7,8 @@ type ApiResult struct {
 	Code int `json:"code"`
 }
 
+
+
 func Ok(data interface{}) ApiResult {
 	return ApiResult{
 		Data: data,

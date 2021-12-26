@@ -21,11 +21,13 @@ type IController interface {
 
 }
 
-type IRequest interface {
-    Check()error
-
-}
-
+//type IApiResult interface {
+//
+//   SetData(data interface{})
+//   SetMsg(msg string)
+//   SetCode(code int)
+//
+//}
 
 
 

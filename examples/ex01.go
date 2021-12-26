@@ -32,6 +32,16 @@ func (c *Ex01Controller)Add(req AddRequest)  {
 
 }
 
+func (c *Ex01Controller)TestError(req AddRequest)  {
+
+    panic("异常。。。")
+
+	c.Ok(gin.H{
+		"data":req,
+	})
+
+}
+
 func (c *Ex01Controller)Get(req GetRequest)  {
 
 
@@ -64,9 +74,14 @@ func Ex01(){
 		RouteStrict: false,  //路由严格匹配（true->表示启动路由大小写严格匹配模式|false->表示忽略路由大小写匹配）
 		Addr: ":10086",
 	})
+	
 	boot.UseTraceID("abc").
-		 UserCore().
-		 UseRecover()
+		 UseCore().
+		 UseRecover(func(msg string,context *gin.Context) interface{} {
+		      return map[string]interface{}{
+		      	"err":"出异常啦",
+			  }
+	     })
 
 	boot.Register(func() core.IController {
 		return &Ex01Controller{}
