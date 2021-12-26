@@ -2,6 +2,7 @@ package core
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/lshsuper/gin-boot/utils"
 	"net/http"
 	"reflect"
 	"strings"
@@ -29,15 +30,45 @@ func (b *BaseController)CallMethod(ctrl IController,methodName string) {
 
 		curMethodName:=t.Method(i).Name
 		if strings.ToLower(curMethodName)==strings.ToLower(methodName){
-			curCtrl.MethodByName(curMethodName).Call(nil)
+
+			curMethod:=curCtrl.MethodByName(curMethodName)
+			if curMethod.Type().NumIn()<=0{
+				curMethod.Call(nil)
+                break
+			}
+
+			ps:=make([]reflect.Value,0)
+			pType:=curMethod.Type().In(0)
+			keyMap:=make(map[string]interface{},0)
+			switch b.Ctx.Request.Method {
+			case GET.String():
+				b.Ctx.Request.ParseForm()
+			case POST:
+				fallthrough
+			case PUT:
+				fallthrough
+			case DELETE:
+				b.Ctx.Request.ParseMultipartForm( 32 << 20)
+			}
+			for k,v:=range b.Ctx.Request.Form{
+				keyMap[k]=v[0]
+			}
+			for k,v:=range b.Ctx.Request.Form{
+				keyMap[k]=v[0]
+			}
+			vType:=utils.BuildStruct(pType,keyMap)
+			ps=append(ps,vType)
+
+
+			curMethod.Call(ps)
 			break
 		}
-
 
 	}
 
 }
 
+//IgnoreMethod 忽略注册方法
 func (b *BaseController)IgnoreMethod(methodName string)bool  {
 
 	methodName=strings.ToLower(methodName)
@@ -73,6 +104,7 @@ func (b *BaseController)GetMethodType(methodName string) MethodType {
 
 //ControllerName 控制器名称
 func (b *BaseController)ControllerName(ctrl IController)string  {
+
 	curCtrl:=reflect.ValueOf(ctrl)
 	t:=strings.Split(curCtrl.Type().String(),".")
 	ctrlName:=t[len(t)-1]
@@ -111,6 +143,9 @@ func (b *BaseController)GetTraceID()string  {
 func (b *BaseController)GetTraceIDKey()string  {
     return getTraceIDKey()
 }
+
+
+
 
 
 

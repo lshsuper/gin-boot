@@ -10,17 +10,35 @@ type Ex01Controller struct {
 	core.BaseController
 }
 
-func (c *Ex01Controller)Add()  {
+type GetRequest struct {
+	UserID int `json:"user_id" form:"user_id"`
+}
 
-	c.Ok("ok add")
+func (req GetRequest)Check()error  {
+	return nil
+}
+
+
+type AddRequest struct {
+	UserID int `json:"user_id" form:"user_id"`
+}
+
+func (c *Ex01Controller)Add(req AddRequest)  {
+
+
+	c.Ok(gin.H{
+		"data":req,
+	})
 
 }
-func (c *Ex01Controller)Get()  {
+
+func (c *Ex01Controller)Get(req GetRequest)  {
 
 
 	c.Ok(gin.H{
 		"key":c.GetTraceIDKey(),
 		"value":c.GetTraceID(),
+		"req":req,
 	})
 
 }

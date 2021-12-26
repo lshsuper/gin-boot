@@ -85,11 +85,9 @@ func (boot *GinBoot)UseRecover()*GinBoot  {
 	boot.Engine.Use(func(context *gin.Context) {
 		defer func() {
 			if r := recover(); r != nil {
-
 				context.JSON(http.StatusOK,Fail(utils.ErrorToString(r)))
 				//终止当前接口
 				context.Abort()
-
 			}
 
 		}()
@@ -104,6 +102,9 @@ func (boot *GinBoot)Use(handler ...gin.HandlerFunc)*GinBoot  {
 	return boot
 }
 
+type MyRequest struct {
+	UserID int `json:"user_id" form:"user_id"`
+}
 
 //Register 注册路由
 func (boot *GinBoot)Register(fn func() IController)*GinBoot {
@@ -134,7 +135,6 @@ func (boot *GinBoot)Register(fn func() IController)*GinBoot {
 			ctrl:=fn()
 			ctrl.setContext(context)
 			ctrl.CallMethod(ctrl,arr[len(arr)-1])
-
 		})
 
 

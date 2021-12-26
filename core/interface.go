@@ -18,6 +18,15 @@ type IController interface {
     Ok(data interface{})
     Fail(msg string)
 
+
 }
+
+type IRequest interface {
+    Check()error
+
+}
+
+
+
 
 
