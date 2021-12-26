@@ -15,14 +15,37 @@ type Ex01Controller struct {
 	core.BaseController
 }
 
-func (c *Ex01Controller)Add()  {
+type GetRequest struct {
+	UserID int `json:"user_id" form:"user_id"`
+}
 
-	c.Ok("ok add")
+func (req GetRequest)Check()error  {
+	return nil
+}
+
+
+type AddRequest struct {
+	UserID int `json:"user_id" form:"user_id"`
+}
+
+func (c *Ex01Controller)Add(req AddRequest)  {
+
+
+	c.Ok(gin.H{
+		"data":req,
+	})
 
 }
-func (c *Ex01Controller)Get()  {
 
-	c.Ok("ok get")
+//可以将请求参数全部映射到结构体
+func (c *Ex01Controller)Get(req GetRequest)  {
+
+
+	c.Ok(gin.H{
+		"key":c.GetTraceIDKey(),
+		"value":c.GetTraceID(),
+		"req":req,
+	})
 
 }
 func (c *Ex01Controller)GetAll()  {
@@ -31,6 +54,15 @@ func (c *Ex01Controller)GetAll()  {
 
 }
 
+type Ex01ExtController struct {
+	core.BaseController
+}
+
+func (c *Ex01ExtController)GetAll()  {
+
+	c.Ok("ok getall")
+
+}
 ```
 
 >3.启动

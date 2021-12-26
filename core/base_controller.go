@@ -64,6 +64,8 @@ func (b *BaseController)CallMethod(ctrl IController,methodName string) {
 			break
 		}
 
+		//b.Ctx.BindWith()
+
 	}
 
 }
@@ -117,7 +119,7 @@ func (b *BaseController)ControllerName(ctrl IController)string  {
 
 func (b *BaseController)Ok(data interface{})  {
 
-	b.Ctx.JSON(http.StatusOK,Ok(data))
+	b.Ctx.JSON(http.StatusOK, Ok(data))
 
 
 }
@@ -130,7 +132,7 @@ func (b *BaseController)Fail(msg string)  {
 
 func (b *BaseController)Result(data interface{},code int,msg string)  {
 
-	b.Ctx.JSON(http.StatusOK,Result(code,data,msg))
+	b.Ctx.JSON(http.StatusOK, Result(code,data,msg))
 
 }
 

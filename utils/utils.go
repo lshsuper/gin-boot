@@ -21,10 +21,28 @@ func BuildStruct(t reflect.Type,valMap map[string]interface{})reflect.Value  {
 	m:=reflect.New(t).Elem()
 	for i:=0;i<m.NumField();i++{
 		curField:=t.Field(i)
-		fieldName:=curField.Tag.Get("form")
+
+		//先检测名称
+		fieldName:=curField.Name
 		if v,ok:=valMap[fieldName];ok{
 			TrySetValue(m.Field(i),v)
+			continue
 		}
+
+		//再检测form
+		fieldName=curField.Tag.Get("form")
+		if v,ok:=valMap[fieldName];ok{
+			TrySetValue(m.Field(i),v)
+			continue
+		}
+
+		//最后检测json
+		fieldName=curField.Tag.Get("json")
+		if v,ok:=valMap[fieldName];ok{
+			TrySetValue(m.Field(i),v)
+			continue
+		}
+
 	}
 	return m
 }
@@ -42,9 +60,9 @@ func TrySetValue(fieldVal reflect.Value,val interface{})  {
 		case reflect.Bool:
 			fieldVal.SetBool(cast.ToBool(val))
 	case  reflect.Int:
-		fieldVal.SetInt(int64(cast.ToInt(val)))
+		    fieldVal.SetInt(int64(cast.ToInt(val)))
 	case reflect.String:
-		fieldVal.SetString(cast.ToString(val))
+		    fieldVal.SetString(cast.ToString(val))
 	}
 }
 
