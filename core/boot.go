@@ -12,55 +12,52 @@ import (
 
 type GinBoot struct {
 	*gin.Engine
-	routeStrict  bool
-	addr string
+	routeStrict bool
+	addr        string
 	//读超时设定
-	readTimeout  int
+	readTimeout int
 	//写超时设定
 	writeTimeout int
-
+	traceIDKey   string
 }
 
 func NewGinBoot(engine *gin.Engine, routeStrict bool, addr string, readTimeout int, writeTimeout int) *GinBoot {
 	return &GinBoot{Engine: engine, routeStrict: routeStrict, addr: addr, readTimeout: readTimeout, writeTimeout: writeTimeout}
 }
 
-
-
-
 // ServeHTTP (自定义拦截策略)
 func (boot *GinBoot) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
-	if !boot.routeStrict{
-		req.URL.Path=strings.ToLower(req.URL.Path)
+	if !boot.routeStrict {
+		req.URL.Path = strings.ToLower(req.URL.Path)
 	}
 
 	//gin自带的拦截器
-	boot.Engine.ServeHTTP(w,req)
+	boot.Engine.ServeHTTP(w, req)
 
 }
 
-func (boot *GinBoot)UseTraceID(traceIDKey string)*GinBoot {
+func (boot *GinBoot) UseTraceID(traceIDKey string) *GinBoot {
 
-	if len(traceIDKey)<=0{
-		traceIDKey=getTraceIDKey()
-	}else{
-		setTraceIDKey(traceIDKey)
+	if len(traceIDKey) <= 0 {
+		traceIDKey = defaultTraceIDKey
 	}
+
+	boot.traceIDKey = traceIDKey
 
 	boot.Engine.Use(func(context *gin.Context) {
 
-		traceId:=context.GetHeader(traceIDKey)
-		if len(traceId)<=0{
-			traceId=strings.ReplaceAll(uuid.NewV4().String(),"-","")
-			context.Request.Header.Add(traceIDKey,traceId)
+		traceId := context.GetHeader(traceIDKey)
+		if len(traceId) <= 0 {
+			traceId = strings.ReplaceAll(uuid.NewV4().String(), "-", "")
+			context.Request.Header.Add(traceIDKey, traceId)
 		}
 		context.Next()
 	})
 	return boot
 }
 
-func (boot *GinBoot)UseCore()*GinBoot  {
+func (boot *GinBoot) UseCore() *GinBoot {
 
 	boot.Engine.Use(func(context *gin.Context) {
 		method := context.Request.Method
@@ -81,10 +78,10 @@ func (boot *GinBoot)UseCore()*GinBoot  {
 	return boot
 }
 
-func (boot *GinBoot)UseRecover(fn func(msg string,context *gin.Context)interface{})*GinBoot  {
+func (boot *GinBoot) UseRecover(fn func(msg string, context *gin.Context) interface{}) *GinBoot {
 
-	if fn==nil{
-		fn= func(msg string,context *gin.Context) interface{} {
+	if fn == nil {
+		fn = func(msg string, context *gin.Context) interface{} {
 			return Fail(msg)
 		}
 	}
@@ -92,7 +89,7 @@ func (boot *GinBoot)UseRecover(fn func(msg string,context *gin.Context)interface
 	boot.Engine.Use(func(context *gin.Context) {
 		defer func() {
 			if r := recover(); r != nil {
-				context.JSON(http.StatusOK, fn(utils.ErrorToString(r),context))
+				context.JSON(http.StatusOK, fn(utils.ErrorToString(r), context))
 				//终止当前接口
 				context.Abort()
 			}
@@ -104,7 +101,7 @@ func (boot *GinBoot)UseRecover(fn func(msg string,context *gin.Context)interface
 	return boot
 }
 
-func (boot *GinBoot)Use(handler ...gin.HandlerFunc)*GinBoot  {
+func (boot *GinBoot) Use(handler ...gin.HandlerFunc) *GinBoot {
 	boot.Engine.Use(handler...)
 	return boot
 }
@@ -114,39 +111,36 @@ type MyRequest struct {
 }
 
 //Register 注册路由
-func (boot *GinBoot)Register(fns ...func() IController)*GinBoot {
+func (boot *GinBoot) Register(fn func() IController) *GinBoot {
 
-	for _,fn:=range fns{
-		c:=fn()
-		t:=reflect.TypeOf(c)
-		ctrlName:=c.ControllerName(c)
+	c := fn()
+	t := reflect.TypeOf(c)
+	ctrlName := c.ControllerName(c)
 
-		for i:=0;i<t.NumMethod();i++{
+	for i := 0; i < t.NumMethod(); i++ {
 
-			methodName:=t.Method(i).Name
+		methodName := t.Method(i).Name
 
-			if c.IgnoreMethod(methodName){
-				continue
-			}
-
-			//判断一下路由是否严格模式
-			if !boot.routeStrict{
-				methodName=strings.ToLower(methodName)
-				ctrlName=strings.ToLower(ctrlName)
-			}
-
-			actionUrl:=fmt.Sprintf("%s/%s",ctrlName,methodName)
-			//方法设定
-			methodType:=c.GetMethodType(methodName)
-			boot.Handle(methodType.String(),fmt.Sprintf("/%s",actionUrl), func(context *gin.Context) {
-				arr:=strings.Split(context.Request.URL.Path,"/")
-				ctrl:=fn()
-				ctrl.setContext(context)
-				ctrl.CallMethod(ctrl,arr[len(arr)-1])
-			})
-
-
+		if c.IgnoreMethod(methodName) {
+			continue
 		}
+
+		//判断一下路由是否严格模式
+		if !boot.routeStrict {
+			methodName = strings.ToLower(methodName)
+			ctrlName = strings.ToLower(ctrlName)
+		}
+
+		actionUrl := fmt.Sprintf("%s/%s", ctrlName, methodName)
+		//方法设定
+		methodType := c.GetMethodType(methodName)
+		boot.Handle(methodType.String(), fmt.Sprintf("/%s", actionUrl), func(context *gin.Context) {
+			arr := strings.Split(context.Request.URL.Path, "/")
+			ctrl := fn()
+			ctrl.setContext(context)
+			ctrl.setTraceIDKey(boot.traceIDKey)
+			ctrl.CallMethod(ctrl, arr[len(arr)-1])
+		})
 
 	}
 
@@ -154,23 +148,17 @@ func (boot *GinBoot)Register(fns ...func() IController)*GinBoot {
 
 }
 
-
-
 //AutoRegister 自动注册所有路由
-func (boot *GinBoot)AutoRegister()  {
+func (boot *GinBoot) AutoRegister() {
 	//TODO 待实现
 }
 
 //Run 启动
-func (boot *GinBoot)Run(){
+func (boot *GinBoot) Run() {
 
-	server:=&http.Server{
+	server := &http.Server{
 		Handler: boot,
-		Addr: boot.addr,
+		Addr:    boot.addr,
 	}
 	server.ListenAndServe()
 }
-
-
-
-

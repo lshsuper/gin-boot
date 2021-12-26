@@ -16,6 +16,8 @@ type IController interface {
 	//控制器名称
 	ControllerName(ctrl IController) string
 	JSON(data interface{})
+	setTraceIDKey(traceIDKey string)
+	GetTraceIDKey() string
 }
 
 //type IApiResult interface {

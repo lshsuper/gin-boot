@@ -11,7 +11,8 @@ import (
 //基础控制器
 type BaseController struct {
 	//基础上下文
-	Ctx *gin.Context
+	Ctx        *gin.Context
+	traceIDKey string
 }
 
 func (b *BaseController) setContext(c *gin.Context) {
@@ -23,7 +24,7 @@ func (b *BaseController) CallMethod(ctrl IController, methodName string) {
 
 	curCtrl := reflect.ValueOf(ctrl)
 	t := curCtrl.Type()
-	for i := 0; i <= curCtrl.NumMethod(); i++ {
+	for i := 0; i < curCtrl.NumMethod(); i++ {
 
 		curMethodName := t.Method(i).Name
 		if strings.ToLower(curMethodName) == strings.ToLower(methodName) {
@@ -121,9 +122,7 @@ func (b *BaseController) Ok(data interface{}) {
 }
 
 func (b *BaseController) Fail(msg string) {
-
 	b.Ctx.JSON(http.StatusOK, Fail(msg))
-
 }
 
 func (b *BaseController) Result(data interface{}, code int, msg string) {
@@ -137,11 +136,12 @@ func (b *BaseController) JSON(data interface{}) {
 }
 
 func (b *BaseController) GetTraceID() string {
-
-	return b.Ctx.GetHeader(getTraceIDKey())
-
+	return b.Ctx.GetHeader(b.traceIDKey)
 }
 
+func (b *BaseController) setTraceIDKey(traceIDKey string) {
+	b.traceIDKey = traceIDKey
+}
 func (b *BaseController) GetTraceIDKey() string {
-	return getTraceIDKey()
+	return b.traceIDKey
 }
