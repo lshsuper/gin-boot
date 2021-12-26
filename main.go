@@ -1,15 +1,14 @@
 package main
 
-import "github.com/lshsuper/gin-boot/examples"
+import (
+	"github.com/lshsuper/gin-boot/examples"
+)
 
-func main()  {
+func main() {
 
 	//执行案例-01
-   examples.Ex01()
+	examples.Ex01()
 
-   //执行案例-02
-  // examples.Ex02()
+	//执行案例-02
+	// examples.Ex02()
 }
-
-
-
