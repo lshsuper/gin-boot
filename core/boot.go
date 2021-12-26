@@ -114,42 +114,47 @@ type MyRequest struct {
 }
 
 //Register 注册路由
-func (boot *GinBoot)Register(fn func() IController)*GinBoot {
+func (boot *GinBoot)Register(fns ...func() IController)*GinBoot {
 
-	c:=fn()
-	t:=reflect.TypeOf(c)
-	ctrlName:=c.ControllerName(c)
+	for _,fn:=range fns{
+		c:=fn()
+		t:=reflect.TypeOf(c)
+		ctrlName:=c.ControllerName(c)
 
-	for i:=0;i<t.NumMethod();i++{
+		for i:=0;i<t.NumMethod();i++{
 
-		methodName:=t.Method(i).Name
+			methodName:=t.Method(i).Name
 
-		if c.IgnoreMethod(methodName){
-			continue
+			if c.IgnoreMethod(methodName){
+				continue
+			}
+
+			//判断一下路由是否严格模式
+			if !boot.routeStrict{
+				methodName=strings.ToLower(methodName)
+				ctrlName=strings.ToLower(ctrlName)
+			}
+
+			actionUrl:=fmt.Sprintf("%s/%s",ctrlName,methodName)
+			//方法设定
+			methodType:=c.GetMethodType(methodName)
+			boot.Handle(methodType.String(),fmt.Sprintf("/%s",actionUrl), func(context *gin.Context) {
+				arr:=strings.Split(context.Request.URL.Path,"/")
+				ctrl:=fn()
+				ctrl.setContext(context)
+				ctrl.CallMethod(ctrl,arr[len(arr)-1])
+			})
+
+
 		}
-
-		//判断一下路由是否严格模式
-		if !boot.routeStrict{
-			methodName=strings.ToLower(methodName)
-			ctrlName=strings.ToLower(ctrlName)
-		}
-
-		actionUrl:=fmt.Sprintf("%s/%s",ctrlName,methodName)
-		//方法设定
-		methodType:=c.GetMethodType(methodName)
-		boot.Handle(methodType.String(),fmt.Sprintf("/%s",actionUrl), func(context *gin.Context) {
-			arr:=strings.Split(context.Request.URL.Path,"/")
-			ctrl:=fn()
-			ctrl.setContext(context)
-			ctrl.CallMethod(ctrl,arr[len(arr)-1])
-		})
-
 
 	}
 
 	return boot
 
 }
+
+
 
 //AutoRegister 自动注册所有路由
 func (boot *GinBoot)AutoRegister()  {

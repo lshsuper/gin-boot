@@ -74,7 +74,7 @@ func Ex01(){
 		RouteStrict: false,  //路由严格匹配（true->表示启动路由大小写严格匹配模式|false->表示忽略路由大小写匹配）
 		Addr: ":10086",
 	})
-	
+
 	boot.UseTraceID("abc").
 		 UseCore().
 		 UseRecover(func(msg string,context *gin.Context) interface{} {
@@ -83,10 +83,6 @@ func Ex01(){
 			  }
 	     })
 
-	boot.Register(func() core.IController {
-		return &Ex01Controller{}
-	}).Register(func() core.IController {
-		return &Ex01ExtController{}
-	})
+	boot.Register(func() core.IController {return &Ex01Controller{}},func() core.IController {return &Ex01ExtController{}})
 	boot.Run()
 }
