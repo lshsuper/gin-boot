@@ -6,6 +6,7 @@
 >1.获取
 ```
 go get github.com/lshsuper/gin-boot
+
 ```
 
 >2.定义控制器
