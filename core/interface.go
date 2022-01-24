@@ -19,11 +19,3 @@ type IController interface {
 	setTraceIDKey(traceIDKey string)
 	GetTraceIDKey() string
 }
-
-//type IApiResult interface {
-//
-//   SetData(data interface{})
-//   SetMsg(msg string)
-//   SetCode(code int)
-//
-//}

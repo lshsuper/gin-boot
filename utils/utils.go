@@ -46,6 +46,7 @@ func BuildStruct(t reflect.Type, valMap map[string]interface{}) reflect.Value {
 	}
 	return m
 }
+
 func QSToMap(qs string) (res map[string]interface{}) {
 	arr := strings.Split(qs, "&")
 	for _, v := range arr {

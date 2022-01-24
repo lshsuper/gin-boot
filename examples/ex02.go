@@ -11,58 +11,53 @@ type MyBaseController struct {
 	core.BaseController
 }
 
-func (b *MyBaseController)Ok(data interface{})  {
+func (b *MyBaseController) Ok(data interface{}) {
 
-	b.Ctx.JSON(http.StatusOK,gin.H{
-		"data":data,
-		"msg":"",
-		"success":true,
-	})
-
-
-}
-
-func (b *MyBaseController)Fail(msg string)  {
-
-	b.Ctx.JSON(http.StatusOK,gin.H{
-		"data":nil,
-		"msg":msg,
-		"success":false,
+	b.Ctx.JSON(http.StatusOK, gin.H{
+		"data":    data,
+		"msg":     "",
+		"success": true,
 	})
 
 }
 
+func (b *MyBaseController) Fail(msg string) {
+
+	b.Ctx.JSON(http.StatusOK, gin.H{
+		"data":    nil,
+		"msg":     msg,
+		"success": false,
+	})
+
+}
 
 type Ex02Controller struct {
 	MyBaseController
 }
 
-
-
-func (c *Ex02Controller)Add()  {
+func (c *Ex02Controller) Add() {
 
 	c.Ok("ok add")
 
 }
-func (c *Ex02Controller)Get()  {
+func (c *Ex02Controller) Get() {
 
 	c.Ok("ok get")
 
 }
-func (c *Ex02Controller)GetAll()  {
+func (c *Ex02Controller) GetAll() {
 
 	c.Ok("ok getall")
 
 }
 
-func Ex02(){
+func Ex02() {
 
-	boot:= server.New(server.GinBootConf{
-		RouteStrict: false,  //路由严格匹配（忽略大小写的匹配模式）
-		Addr: ":10086",
+	boot := server.New(server.GinBootConf{
+		RouteStrict: false, //路由严格匹配（忽略大小写的匹配模式）
+		Addr:        ":10086",
 	})
-	boot.Register(func() core.IController {
-		return &Ex02Controller{}
-	})
+	ex02 := &Ex02Controller{}
+	boot.Register(ex02)
 	boot.Run()
 }

@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-type GinBoot struct {
+type BootServer struct {
 	*gin.Engine
 	routeStrict bool
 	addr        string
@@ -21,12 +21,12 @@ type GinBoot struct {
 	traceIDKey   string
 }
 
-func NewGinBoot(engine *gin.Engine, routeStrict bool, addr string, readTimeout int, writeTimeout int) *GinBoot {
-	return &GinBoot{Engine: engine, routeStrict: routeStrict, addr: addr, readTimeout: readTimeout, writeTimeout: writeTimeout}
+func NewGinBoot(engine *gin.Engine, routeStrict bool, addr string, readTimeout int, writeTimeout int) *BootServer {
+	return &BootServer{Engine: engine, routeStrict: routeStrict, addr: addr, readTimeout: readTimeout, writeTimeout: writeTimeout}
 }
 
 // ServeHTTP (自定义拦截策略)
-func (boot *GinBoot) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+func (boot *BootServer) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 	if !boot.routeStrict {
 		req.URL.Path = strings.ToLower(req.URL.Path)
@@ -37,7 +37,7 @@ func (boot *GinBoot) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 }
 
-func (boot *GinBoot) UseTraceID(traceIDKey string) *GinBoot {
+func (boot *BootServer) UseTraceID(traceIDKey string) *BootServer {
 
 	if len(traceIDKey) <= 0 {
 		traceIDKey = defaultTraceIDKey
@@ -57,7 +57,7 @@ func (boot *GinBoot) UseTraceID(traceIDKey string) *GinBoot {
 	return boot
 }
 
-func (boot *GinBoot) UseCore() *GinBoot {
+func (boot *BootServer) UseCore() *BootServer {
 
 	boot.Engine.Use(func(context *gin.Context) {
 		method := context.Request.Method
@@ -78,7 +78,7 @@ func (boot *GinBoot) UseCore() *GinBoot {
 	return boot
 }
 
-func (boot *GinBoot) UseRecover(fn func(msg string, context *gin.Context) interface{}) *GinBoot {
+func (boot *BootServer) UseRecover(fn func(msg string, context *gin.Context) interface{}) *BootServer {
 
 	if fn == nil {
 		fn = func(msg string, context *gin.Context) interface{} {
@@ -101,27 +101,31 @@ func (boot *GinBoot) UseRecover(fn func(msg string, context *gin.Context) interf
 	return boot
 }
 
-func (boot *GinBoot) Use(handler ...gin.HandlerFunc) *GinBoot {
+func (boot *BootServer) Use(handler ...gin.HandlerFunc) *BootServer {
 	boot.Engine.Use(handler...)
 	return boot
 }
 
-type MyRequest struct {
-	UserID int `json:"user_id" form:"user_id"`
+//Register 注册路由
+func (boot *BootServer) Register(controllers ...IController) *BootServer {
+
+	for _, controller := range controllers {
+		boot.register(boot.Engine, controller)
+	}
+
+	return boot
+
 }
 
-//Register 注册路由
-func (boot *GinBoot) Register(fn func() IController) *GinBoot {
-
-	c := fn()
-	t := reflect.TypeOf(c)
-	ctrlName := c.ControllerName(c)
+func (boot *BootServer) register(e *gin.Engine, controller IController) {
+	t := reflect.TypeOf(controller)
+	ctrlName := controller.ControllerName(controller)
 
 	for i := 0; i < t.NumMethod(); i++ {
 
 		methodName := t.Method(i).Name
 
-		if c.IgnoreMethod(methodName) {
+		if controller.IgnoreMethod(methodName) {
 			continue
 		}
 
@@ -133,10 +137,11 @@ func (boot *GinBoot) Register(fn func() IController) *GinBoot {
 
 		actionUrl := fmt.Sprintf("%s/%s", ctrlName, methodName)
 		//方法设定
-		methodType := c.GetMethodType(methodName)
-		boot.Handle(methodType.String(), fmt.Sprintf("/%s", actionUrl), func(context *gin.Context) {
+		methodType := controller.GetMethodType(methodName)
+
+		e.Handle(methodType.String(), fmt.Sprintf("/%s", actionUrl), func(context *gin.Context) {
 			arr := strings.Split(context.Request.URL.Path, "/")
-			ctrl := fn()
+			ctrl := controller
 			ctrl.setContext(context)
 			ctrl.setTraceIDKey(boot.traceIDKey)
 			ctrl.CallMethod(ctrl, arr[len(arr)-1])
@@ -144,17 +149,15 @@ func (boot *GinBoot) Register(fn func() IController) *GinBoot {
 
 	}
 
-	return boot
-
 }
 
 //AutoRegister 自动注册所有路由
-func (boot *GinBoot) AutoRegister() {
+func (boot *BootServer) AutoRegister() {
 	//TODO 待实现
 }
 
 //Run 启动
-func (boot *GinBoot) Run() {
+func (boot *BootServer) Run() {
 
 	server := &http.Server{
 		Handler: boot,

@@ -80,8 +80,10 @@ func Ex01() {
 		})
 
 	//注册控制器
-	boot.Register(func() core.IController { return &Ex01Controller{} }).
-		Register(func() core.IController { return &Ex01ExtController{} })
+	ex01 := &Ex01Controller{}
+	ex02Ext := &Ex01ExtController{}
+	boot.Register(ex01).
+		Register(ex02Ext)
 	boot.Run()
 
 }
