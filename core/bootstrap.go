@@ -153,7 +153,11 @@ func (boot *BootServer) register(e *gin.Engine, controller IController) {
 
 		e.Handle(methodType.String(), fmt.Sprintf("/%s", actionUrl), func(context *gin.Context) {
 			arr := strings.Split(context.Request.URL.Path, "/")
-			ctrl := controller
+
+			//对象copy方式
+
+			ctrl := reflect.New(reflect.TypeOf(controller).Elem()).Interface().(IController)
+
 			ctrl.setContext(context)
 			ctrl.setTraceIDKey(boot.traceIDKey)
 			ctrl.CallMethod(ctrl, arr[len(arr)-1])

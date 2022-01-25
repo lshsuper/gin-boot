@@ -54,7 +54,7 @@ func (b *RestController) Ok(data interface{}) {
 	b.Ctx.JSON(http.StatusOK, data)
 }
 
-//Fail 失败
+//Error 失败
 func (b *RestController) Error(data interface{}) {
 	b.Ctx.JSON(http.StatusInternalServerError, data)
 }

@@ -73,11 +73,7 @@ func Ex01() {
 
 	boot.UseTraceID("request_id").
 		UseCore(nil).
-		UseRecover(func(msg string, context *gin.Context) interface{} {
-			return map[string]interface{}{
-				"err": "出异常啦",
-			}
-		})
+		UseRecover(nil)
 
 	//注册控制器
 	ex01 := &Ex01Controller{}
