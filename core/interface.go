@@ -7,15 +7,16 @@ type IController interface {
 
 	//设定gin的上下文
 	setContext(c *gin.Context)
-	//动态执行action
+	//CallMethod 动态执行action
 	CallMethod(ctrl IController, methodName string)
-	//忽略注册的方法策略
+	//IgnoreMethod 忽略注册的方法策略
 	IgnoreMethod(methodName string) bool
-	//获取具体action的请求method策略
+	//GetMethodType 获取具体action的请求method策略
 	GetMethodType(methodName string) MethodType
-	//控制器名称
+	//ControllerName 控制器名称
 	ControllerName(ctrl IController) string
 	JSON(data interface{})
 	setTraceIDKey(traceIDKey string)
 	GetTraceIDKey() string
+	clone(c IController) IController
 }

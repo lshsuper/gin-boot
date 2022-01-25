@@ -145,3 +145,8 @@ func (b *BaseController) setTraceIDKey(traceIDKey string) {
 func (b *BaseController) GetTraceIDKey() string {
 	return b.traceIDKey
 }
+
+func (b *BaseController) clone(c IController) IController {
+	res := reflect.New(reflect.TypeOf(c).Elem()).Interface().(IController)
+	return res
+}
