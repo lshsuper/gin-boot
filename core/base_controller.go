@@ -2,6 +2,7 @@ package core
 
 import (
 	"github.com/gin-gonic/gin"
+	v "github.com/lshsuper/gin-boot/core/validator"
 	"github.com/lshsuper/gin-boot/utils"
 	"net/http"
 	"reflect"
@@ -149,4 +150,14 @@ func (b *BaseController) GetTraceIDKey() string {
 func (b *BaseController) clone(c IController) IController {
 	res := reflect.New(reflect.TypeOf(c).Elem()).Interface().(IController)
 	return res
+}
+
+//CheckJSON 核对JSON
+func (b *BaseController) CheckJSON(req v.IRequest) error {
+	return v.Form(b.Ctx).CheckJSON(req)
+}
+
+//CheckForm 核对FormData
+func (b *BaseController) CheckForm(req v.IRequest) error {
+	return v.Form(b.Ctx).CheckForm(req)
 }

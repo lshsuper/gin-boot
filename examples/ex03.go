@@ -34,4 +34,5 @@ func Ex03() {
 	ex03 := &Ex03Controller{}
 	boot.Register(ex03)
 	boot.Run()
+
 }

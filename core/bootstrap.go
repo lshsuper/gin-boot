@@ -170,6 +170,7 @@ func (boot *BootServer) register(e *gin.Engine, controller IController) {
 //AutoRegister 自动注册所有路由
 func (boot *BootServer) AutoRegister() {
 	//TODO 待实现
+
 }
 
 //Run 启动
