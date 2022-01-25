@@ -15,7 +15,7 @@ func (b *RestController) GetMethodType(methodName string) MethodType {
 
 	//可以设定默认的判定规则,也可以重写该方法自定义规则
 	methodName = strings.ToLower(methodName)
-	if strings.Index(methodName, "add") >= 0 {
+	if strings.Index(methodName, "add") >= 0 || strings.Index(methodName, "insert") >= 0 {
 		return POST
 	}
 
@@ -42,7 +42,7 @@ func (b *RestController) IgnoreMethod(methodName string) bool {
 	if methodName == "unauthorized" ||
 		methodName == "badrequest" ||
 		methodName == "notfound" ||
-		methodName == "statuscode" {
+		methodName == "statuscode" || methodName == "error" {
 		return true
 	}
 

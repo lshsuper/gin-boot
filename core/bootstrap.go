@@ -21,6 +21,13 @@ type BootServer struct {
 	traceIDKey   string
 }
 
+type BootCoreConf struct {
+	AllowOrigin   string
+	AllowHeaders  string
+	AllowMethods  string
+	ExposeHeaders string
+}
+
 func NewGinBoot(engine *gin.Engine, routeStrict bool, addr string, readTimeout int, writeTimeout int) *BootServer {
 	return &BootServer{Engine: engine, routeStrict: routeStrict, addr: addr, readTimeout: readTimeout, writeTimeout: writeTimeout}
 }
@@ -55,13 +62,6 @@ func (boot *BootServer) UseTraceID(traceIDKey string) *BootServer {
 		context.Next()
 	})
 	return boot
-}
-
-type BootCoreConf struct {
-	AllowOrigin   string
-	AllowHeaders  string
-	AllowMethods  string
-	ExposeHeaders string
 }
 
 func (boot *BootServer) UseCore(conf *BootCoreConf) *BootServer {
