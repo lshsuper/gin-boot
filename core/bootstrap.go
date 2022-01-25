@@ -57,15 +57,27 @@ func (boot *BootServer) UseTraceID(traceIDKey string) *BootServer {
 	return boot
 }
 
-func (boot *BootServer) UseCore() *BootServer {
+type BootCoreConf struct {
+	AllowOrigin   string
+	AllowHeaders  string
+	AllowMethods  string
+	ExposeHeaders string
+}
+
+func (boot *BootServer) UseCore(conf *BootCoreConf) *BootServer {
+
+	//不填就是默认配置
+	if conf == nil {
+		conf = defaultBootCore
+	}
 
 	boot.Engine.Use(func(context *gin.Context) {
 		method := context.Request.Method
 
-		context.Header("Access-Control-Allow-Origin", "*")
-		context.Header("Access-Control-Allow-Headers", "access-control-allow-origin,content-Type,AccessToken,X-CSRF-Token, Authorization, Token")
-		context.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
-		context.Header("Access-Control-Expose-Headers", "content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, content-Type")
+		context.Header("Access-Control-Allow-Origin", conf.AllowOrigin)
+		context.Header("Access-Control-Allow-Headers", conf.AllowHeaders)
+		context.Header("Access-Control-Allow-Methods", conf.AllowMethods)
+		context.Header("Access-Control-Expose-Headers", conf.ExposeHeaders)
 		context.Header("Access-Control-Allow-Credentials", "true")
 
 		//放行所有OPTIONS方法

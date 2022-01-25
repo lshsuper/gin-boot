@@ -72,7 +72,7 @@ func Ex01() {
 	})
 
 	boot.UseTraceID("request_id").
-		UseCore().
+		UseCore(nil).
 		UseRecover(func(msg string, context *gin.Context) interface{} {
 			return map[string]interface{}{
 				"err": "出异常啦",
