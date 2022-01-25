@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-//基础控制器
+//BaseController 基础控制器
 type BaseController struct {
 	//基础上下文
 	Ctx        *gin.Context

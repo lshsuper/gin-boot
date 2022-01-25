@@ -53,7 +53,7 @@ func (c *Ex02Controller) GetAll() {
 
 func Ex02() {
 
-	boot := server.New(server.GinBootConf{
+	boot := server.New(server.BootConf{
 		RouteStrict: false, //路由严格匹配（忽略大小写的匹配模式）
 		Addr:        ":10086",
 	})

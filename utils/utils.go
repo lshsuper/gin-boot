@@ -3,7 +3,6 @@ package utils
 import (
 	"github.com/spf13/cast"
 	"reflect"
-	"strings"
 )
 
 // recover错误，转string
@@ -16,6 +15,7 @@ func ErrorToString(r interface{}) string {
 	}
 }
 
+//BuildStruct 构建结构体
 func BuildStruct(t reflect.Type, valMap map[string]interface{}) reflect.Value {
 
 	m := reflect.New(t).Elem()
@@ -47,15 +47,7 @@ func BuildStruct(t reflect.Type, valMap map[string]interface{}) reflect.Value {
 	return m
 }
 
-func QSToMap(qs string) (res map[string]interface{}) {
-	arr := strings.Split(qs, "&")
-	for _, v := range arr {
-		vArr := strings.Split(v, "=")
-		res[vArr[0]] = vArr[1]
-	}
-	return
-}
-
+//TrySetValue 设置值
 func TrySetValue(fieldVal reflect.Value, val interface{}) {
 	switch fieldVal.Kind() {
 	case reflect.Bool:

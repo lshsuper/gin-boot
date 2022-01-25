@@ -5,15 +5,9 @@ import (
 	"strings"
 )
 
-//RestController
+//RestController 完全restfull风格
 type RestController struct {
 	BaseController
-}
-
-func (b *RestController) Ok(data interface{}) {
-
-	b.Ctx.JSON(http.StatusOK, data)
-
 }
 
 //GetMethodType 严格rest模式
@@ -55,14 +49,22 @@ func (b *RestController) IgnoreMethod(methodName string) bool {
 	return false
 }
 
-func (b *RestController) Fail(data interface{}) {
+//Ok 200
+func (b *RestController) Ok(data interface{}) {
+	b.Ctx.JSON(http.StatusOK, data)
+}
+
+//Fail 失败
+func (b *RestController) Error(data interface{}) {
 	b.Ctx.JSON(http.StatusInternalServerError, data)
 }
 
+//Unauthorized 未授权(401)
 func (b *RestController) Unauthorized() {
 	b.Ctx.JSON(http.StatusUnauthorized, nil)
 }
 
+//BadRequest 失败请求（400）
 func (b *RestController) BadRequest() {
 	b.Ctx.JSON(http.StatusBadRequest, nil)
 }
