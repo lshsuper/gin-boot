@@ -147,6 +147,7 @@ func (b *BaseController) GetTraceIDKey() string {
 	return b.traceIDKey
 }
 
+//clone 构建新实例
 func (b *BaseController) clone(c IController) IController {
 	res := reflect.New(reflect.TypeOf(c).Elem()).Interface().(IController)
 	return res

@@ -3,6 +3,7 @@ package core
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/lshsuper/gin-boot/core/validator"
 	"github.com/lshsuper/gin-boot/utils"
 	uuid "github.com/satori/go.uuid"
 	"net/http"
@@ -171,6 +172,11 @@ func (boot *BootServer) register(e *gin.Engine, controller IController) {
 func (boot *BootServer) AutoRegister() {
 	//TODO 待实现
 
+}
+
+//RegisterValidator 注册验证插件
+func (boot *BootServer) RegisterValidator() {
+	validator.Register()
 }
 
 //Run 启动
