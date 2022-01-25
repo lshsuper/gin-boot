@@ -129,6 +129,7 @@ func (boot *BootServer) Register(controllers ...IController) *BootServer {
 
 }
 
+//register 注册核心逻辑
 func (boot *BootServer) register(e *gin.Engine, controller IController) {
 	t := reflect.TypeOf(controller)
 	ctrlName := controller.ControllerName(controller)
@@ -155,7 +156,6 @@ func (boot *BootServer) register(e *gin.Engine, controller IController) {
 		e.Handle(methodType.String(), fmt.Sprintf("/%s", actionUrl), func(context *gin.Context) {
 
 			arr := strings.Split(context.Request.URL.Path, "/")
-			//对象copy方式
 			ctrl := controller.clone(controller)
 			ctrl.setContext(context)
 			ctrl.setTraceIDKey(boot.traceIDKey)
