@@ -82,7 +82,7 @@ func (b *BaseController) IgnoreMethod(methodName string) bool {
 		methodName == "result" ||
 		methodName == "gettraceid" ||
 		methodName == "gettraceidkey" ||
-		methodName == "json" {
+		methodName == "json" || methodName == "checkjson" || methodName == "checkform" {
 		return true
 	}
 	return false

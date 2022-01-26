@@ -59,9 +59,7 @@ type Ex01ExtController struct {
 }
 
 func (c *Ex01ExtController) GetAll() {
-
 	c.Ok("ok getall")
-
 }
 
 func Ex01() {
@@ -74,12 +72,11 @@ func Ex01() {
 	boot.UseTraceID("request_id").
 		UseCore(nil).
 		UseRecover(nil)
+	//.RegisterPprof()
 
 	//注册控制器
-	ex01 := &Ex01Controller{}
-	ex02Ext := &Ex01ExtController{}
-	boot.Register(ex01).
-		Register(ex02Ext)
+	boot.Register(&Ex01Controller{}).
+		Register(&Ex01ExtController{})
 	boot.Run()
 
 }

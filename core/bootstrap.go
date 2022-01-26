@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	"github.com/lshsuper/gin-boot/core/validator"
 	"github.com/lshsuper/gin-boot/utils"
@@ -177,6 +178,11 @@ func (boot *BootServer) AutoRegister() {
 //RegisterValidator 注册验证插件
 func (boot *BootServer) RegisterValidator() {
 	validator.Register()
+}
+
+//RegisterPprof 注册性能分析器
+func (boot *BootServer) RegisterPprof() {
+	pprof.Register(boot.Engine)
 }
 
 //Run 启动
